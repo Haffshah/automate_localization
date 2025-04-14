@@ -34,10 +34,6 @@ Install deep-translator and colorama:
 pip install deep-translator colorama
 ---------------------------------------------------------------------
 
-Here’s a **GitHub README.md** version for your language translation automation project using `deep-translator`. It includes installation steps, usage instructions, images, and guidance.
-
----
-
 # 🌍 Language Translation Automation using Python
 
 This project demonstrates how to **automate translation** of an English `.json` file (typically used for localization in Flutter apps) into multiple languages using Python and the [`deep-translator`](https://github.com/nidhaloff/deep-translator) package.
@@ -169,9 +165,4 @@ Feel free to fork and contribute with:
 ## 💬 Let’s Connect
 
 If you like this, feel free to share on [LinkedIn](https://www.linkedin.com/in/harsh-m-shah-5152b21a9/) or drop a ⭐️ on the repo.
-
----
-
-Would you like me to generate the actual `translate_json.py` and folder structure as well?
-
 
