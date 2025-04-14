@@ -51,8 +51,10 @@ This project demonstrates how to **automate translation** of an English `.json` 
 
 ## 📸 Preview
 
-### 🔧 Terminal Execution
-![Screenshot 2025-04-14 at 7.24.50 PM.png](..%2F..%2FDesktop%2FScreenshot%202025-04-14%20at%207.24.50%E2%80%AFPM.png)
+### 🔧 Terminal Execution 
+<img width="581" alt="Screenshot 2025-04-14 at 7 24 50 PM" src="https://github.com/user-attachments/assets/1517444c-f577-4e9f-8c4d-06d09c89e6d7" />
+
+
 ### 📁 Output Folder
 Each language will have its corresponding JSON file:
 
