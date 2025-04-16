@@ -1,9 +1,3 @@
 {
-  "keyBack": "பின்",
-  "keyNo": "இல்லை",
-  "keyYes": "ஆம்",
-  "keyOk": "சரி",
-  "keyEdit": "திருத்து",
-  "keyCancel": "ரத்துசெய்",
-  "keyAdd": "சேர்"
+  "keyFeedbackIsRequired": "கருத்து தேவை."
 }

@@ -15,14 +15,14 @@ languages = {
     "kn": "Kannada",
     "mr": "Marathi",
     "pa": "Punjabi",
-    "om": "Oromo",
+    "zh-TW": "Chinese",
     "bn": "Bengali",
-    "so": "Somali",
+    "ja": "Japanese",
     "te": "Telugu",
     "ta": "Tamil",
     "ur": "Urdu",
     "hi": "Hindi",
-    "ti": "Tigrinya",
+    "ko": "Korean",
     "pt": "Portuguese"
 }
 

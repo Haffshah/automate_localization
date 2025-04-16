@@ -1,9 +1,3 @@
 {
-  "keyBack": "తిరిగి",
-  "keyNo": "లేదు",
-  "keyYes": "అవును",
-  "keyOk": "సరే",
-  "keyEdit": "సవరణ",
-  "keyCancel": "రద్దు చేయండి",
-  "keyAdd": "జోడించు"
+  "keyFeedbackIsRequired": "అభిప్రాయం అవసరం."
 }

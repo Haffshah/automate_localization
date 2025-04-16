@@ -1,9 +1,3 @@
 {
-  "keyBack": "पीछे",
-  "keyNo": "नहीं",
-  "keyYes": "हाँ",
-  "keyOk": "ठीक है",
-  "keyEdit": "संपादन करना",
-  "keyCancel": "रद्द करना",
-  "keyAdd": "जोड़ना"
+  "keyFeedbackIsRequired": "प्रतिक्रिया की आवश्यकता है।"
 }

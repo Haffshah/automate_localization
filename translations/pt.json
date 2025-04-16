@@ -1,9 +1,3 @@
 {
-  "keyBack": "Voltar",
-  "keyNo": "Não",
-  "keyYes": "Sim",
-  "keyOk": "OK",
-  "keyEdit": "Editar",
-  "keyCancel": "Cancelar",
-  "keyAdd": "Adicionar"
+  "keyFeedbackIsRequired": "É necessário feedback."
 }

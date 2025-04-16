@@ -1,9 +1,3 @@
 {
-  "keyBack": "ተመለስ",
-  "keyNo": "አይ",
-  "keyYes": "አዎ",
-  "keyOk": "እሺ",
-  "keyEdit": "አርትዕ",
-  "keyCancel": "ይቅር",
-  "keyAdd": "ጨምር"
+  "keyFeedbackIsRequired": "ግብረመልስ ያስፈልጋል."
 }

@@ -1,9 +1,3 @@
 {
-  "keyBack": "પાછળની બાજુ",
-  "keyNo": "કોઈ",
-  "keyYes": "હા",
-  "keyOk": "ઠીક",
-  "keyEdit": "સંપાદન કરવું",
-  "keyCancel": "રદ કરવું",
-  "keyAdd": "ઉમેરો"
+  "keyFeedbackIsRequired": "પ્રતિસાદ જરૂરી છે."
 }
