@@ -1,39 +1,3 @@
-# automate_localization
-
----------------------------------------------------------------------
-Install Python:
-brew install python
-
-Check Python Version:
-python3 --version
-pip3 --version
-
-Install Deep Translator:
-pip3 install deep-translator
-
-Run the Script:
-python3 translate_json.py
-
-🔹 Step 1: Create a Virtual Environment
-python3 -m venv venv
-
-🔹 Step 2: Activate the Virtual Environment
-source venv/bin/activate
-
-Your prompt will now look like this:
-(venv) username@user %
-
-🔹 Step 3: Install Deep Translator (now allowed)
-pip install deep-translator
-
-🔹 Step 4: Run Your Script
-python translate_json.py
-
-# For Colored Output
-Install deep-translator and colorama:
-pip install deep-translator colorama
----------------------------------------------------------------------
-
 # 🌍 Language Translation Automation using Python
 
 This project demonstrates how to **automate translation** of an English `.json` file (typically used for localization in Flutter apps) into multiple languages using Python and the [`deep-translator`](https://github.com/nidhaloff/deep-translator) package.
@@ -51,11 +15,11 @@ This project demonstrates how to **automate translation** of an English `.json` 
 <img width="581" alt="Screenshot 2025-04-14 at 7 24 50 PM" src="https://github.com/user-attachments/assets/1517444c-f577-4e9f-8c4d-06d09c89e6d7" />
 
 
-### 📁 Output Folder
-Each language will have its corresponding JSON file:
+### Output Folder
+Each language will have its corresponding JSON file in the `translations` directory:
 
 ```
-translated_output/
+translations/
 ├── am.json
 ├── gu.json
 ├── hi.json
@@ -84,7 +48,7 @@ source venv/bin/activate
 
 ### 3. Install Dependencies
 ```bash
-pip install deep-translator
+pip install deep-translator colorama
 ```
 
 ---
@@ -92,7 +56,7 @@ pip install deep-translator
 ## 📄 Usage
 
 ### Input
-Place your English translation file `en.json` in the root directory. Example:
+Place your English translation file `en.json` in the root directory (or specify another file). Example:
 ```json
 {
   "hello": "Hello",
@@ -102,17 +66,22 @@ Place your English translation file `en.json` in the root directory. Example:
 ```
 
 ### Run the Script
+Basic usage (defaults to `en.json` and `translations/` output):
 ```bash
 python translate_json.py
 ```
 
-### During Execution
-You'll see live updates like:
+Custom usage:
+```bash
+python translate_json.py --source my_file.json --output_dir my_output
 ```
-Translating to am (Amharic)
-Line 1: Hello → ሰላም
-Line 2: Welcome → እንኳን ደህና መጡ
-...
+
+### During Execution
+You'll see batch processing updates:
+```
+🌍 Translating to Hindi (hi)
+   ... translated batch 1/1
+✅ Saved: translations/hi.json
 ```
 
 ---
@@ -125,30 +94,22 @@ Line 2: Welcome → እንኳን ደህና መጡ
 - Kannada (`kn`)
 - Marathi (`mr`)
 - Punjabi (`pa`)
-- Oromo (`om`)
+- Chinese Traditional (`zh-TW`)
 - Bengali (`bn`)
-- Somali (`so`)
+- Japanese (`ja`)
 - Telugu (`te`)
 - Tamil (`ta`)
 - Urdu (`ur`)
 - Hindi (`hi`)
-- Tigrinya (`ti`)
-- Portuguese (`pt`)
+- Number of others including Spanish, French, German, Italian, Russian, Arabic, etc.
 
-You can customize this list in `translate_json.py` under:
-```python
-target_languages = {
-  'am': 'Amharic',
-  'gu': 'Gujarati',
-  ...
-}
-```
+You can customize this list in `translate_json.py`.
 
 ---
 
 ## 📦 Output
 
-After completion, you will get JSON files like `hi.json`, `ta.json`, `pa.json` inside the `/translated_output` directory, ready for integration with your Flutter app.
+After completion, you will get JSON files like `hi.json`, `ta.json`, `pa.json` inside the `/translations` directory, ready for integration with your Flutter app.
 
 ---
 
