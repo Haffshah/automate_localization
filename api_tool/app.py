@@ -1,8 +1,5 @@
-import os
 import json
-import zipfile
-import io
-from flask import Flask, request, send_file, jsonify
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from deep_translator import GoogleTranslator
 
@@ -49,13 +46,25 @@ def translate_batch(target_lang, texts, chunk_size=50):
             
     return translated_results
 
+@app.route('/', methods=['GET'])
+def home():
+    """API Root with documentation."""
+    return jsonify({
+        "status": "online",
+        "message": "Localization API is running.",
+        "endpoints": {
+            "GET /api/languages": "List supported languages",
+            "POST /api/translate_single": "Translate a JSON file. Params: 'file' (multipart/form-data), 'language' (string code)"
+        }
+    })
+
 @app.route('/api/languages', methods=['GET'])
 def get_languages():
     return jsonify(LANGUAGES)
 
 @app.route('/api/translate_single', methods=['POST'])
 def translate_single():
-    """Translate file to a single language and return JSON."""
+    """Translate file to a single language and return JSON (API endpoint)."""
     if 'file' not in request.files:
         return jsonify({"error": "No file uploaded"}), 400
         
@@ -63,7 +72,7 @@ def translate_single():
     target_lang = request.form.get('language')
     
     if not target_lang or target_lang not in LANGUAGES:
-         return jsonify({"error": "Invalid or missing language"}), 400
+         return jsonify({"error": f"Invalid or missing language. Supported: {list(LANGUAGES.keys())}"}), 400
 
     try:
         content = file.read().decode('utf-8')
@@ -76,7 +85,6 @@ def translate_single():
         translated_values = translate_batch(target_lang, values)
         translated_data = dict(zip(keys, translated_values))
         
-        # Return the translated JSON directly
         return jsonify(translated_data)
 
     except json.JSONDecodeError:
