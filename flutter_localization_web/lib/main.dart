@@ -546,7 +546,7 @@ class _ProcessingList extends StatelessWidget {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.white.withAlpha(13),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -658,7 +658,7 @@ class _LanguageSelector extends StatelessWidget {
                 label: Text(e.value),
                 selected: isSelected,
                 onSelected: (v) => onToggle(e.key, v),
-                selectedColor: const Color(0xFF8B5CF6).withOpacity(0.3),
+                selectedColor: const Color(0xFF8B5CF6).withAlpha(77),
                 checkmarkColor: Colors.white,
                 labelStyle: TextStyle(
                   color: isSelected ? Colors.white : Colors.white60,
@@ -691,7 +691,7 @@ class _AnimatedBackground extends StatelessWidget {
                   width: 500,
                   height: 500,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF8B5CF6).withOpacity(0.3),
+                    color: const Color(0xFF8B5CF6).withAlpha(77),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -708,7 +708,7 @@ class _AnimatedBackground extends StatelessWidget {
                   width: 400,
                   height: 400,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEC4899).withOpacity(0.2),
+                    color: const Color(0xFFEC4899).withAlpha(51),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -732,9 +732,9 @@ class _GlassContainer extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
         child: Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF1E293B).withOpacity(0.6),
+            color: const Color(0xFF1E293B).withAlpha(153),
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
+            border: Border.all(color: Colors.white.withAlpha(26)),
           ),
           padding: const EdgeInsets.all(32),
           child: child,
@@ -799,7 +799,7 @@ class _FileUploadArea extends StatelessWidget {
       child: Container(
         height: 100,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withAlpha(13),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: selectedFile != null
@@ -913,15 +913,15 @@ class _PrimaryButtonState extends State<_PrimaryButton> {
                           end: Alignment.bottomRight,
                         ),
                   color: widget.isSecondary
-                      ? Colors.white.withOpacity(0.1)
-                      : (isDisabled ? Colors.white.withOpacity(0.05) : null),
+                      ? Colors.white.withAlpha(26)
+                      : (isDisabled ? Colors.white.withAlpha(13) : null),
                   border: widget.isSecondary
                       ? Border.all(color: Colors.white24, width: 1.5)
                       : null,
                   boxShadow: (!isDisabled && !widget.isSecondary && _isHovering)
                       ? [
                           BoxShadow(
-                            color: const Color(0xFFEC4899).withOpacity(0.5),
+                            color: const Color(0xFFEC4899).withAlpha(128),
                             blurRadius: 20,
                             offset: const Offset(0, 5),
                           ),
