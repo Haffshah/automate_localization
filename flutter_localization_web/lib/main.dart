@@ -72,12 +72,15 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isProcessing = false;
   double _progress = 0.0;
   String? _errorMessage;
+  String? _estimatedRemainingTime;
 
   @override
   void initState() {
     super.initState();
     _fetchLanguages();
   }
+
+  // ... (existing _fetchLanguages method)
 
   Future<void> _fetchLanguages() async {
     setState(() => _isLoadingLanguages = true);
@@ -160,6 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _isProcessing = true;
       _progress = 0.0;
+      _estimatedRemainingTime = 'Calculating time...';
     });
 
     // Filter only idle ones (or should we re-process errors? Let's process idle & error)
@@ -168,6 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
         .toList();
 
     int completedCount = 0;
+    final stopwatch = Stopwatch()..start();
 
     for (var lang in toProcess) {
       if (!mounted) break;
@@ -210,12 +215,34 @@ class _HomeScreenState extends State<HomeScreen> {
       }
 
       completedCount++;
+
+      // Calculate Estimate
+      final elapsedMs = stopwatch.elapsedMilliseconds;
+      final avgTimePerLang = elapsedMs / completedCount;
+      final remainingLangs = toProcess.length - completedCount;
+      final remainingMs = avgTimePerLang * remainingLangs;
+      final remainingDuration = Duration(milliseconds: remainingMs.toInt());
+
+      String timeStr;
+      if (remainingDuration.inMinutes > 0) {
+        timeStr =
+            '${remainingDuration.inMinutes}m ${remainingDuration.inSeconds % 60}s remaining';
+      } else {
+        timeStr = '${remainingDuration.inSeconds}s remaining';
+      }
+
       setState(() {
         _progress = completedCount / toProcess.length;
+        _estimatedRemainingTime = (remainingLangs == 0)
+            ? 'Almost done...'
+            : 'Approx. $timeStr';
       });
     }
 
-    setState(() => _isProcessing = false);
+    setState(() {
+      _isProcessing = false;
+      _estimatedRemainingTime = null;
+    });
   }
 
   void _downloadSingle(LanguageStatus lang) {
@@ -347,14 +374,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                   title: 'Process & Download',
                                 ),
                                 if (_isProcessing)
-                                  Text(
-                                    '${(_progress * 100).toInt()}% Completed',
-                                    style: TextStyle(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.secondary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        '${(_progress * 100).toInt()}%',
+                                        style: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.secondary,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      if (_estimatedRemainingTime != null)
+                                        Text(
+                                          _estimatedRemainingTime!,
+                                          style: const TextStyle(
+                                            color: Colors.white54,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                    ],
                                   ),
                               ],
                             ),
