@@ -113,6 +113,38 @@ After completion, you will get JSON files like `hi.json`, `ta.json`, `pa.json` i
 
 ---
 
+## 💻 Web Interface (Flutter + Python)
+
+This project now includes a **Flutter Web** interface powered by a **Python Flask** backend.
+
+### Architecture
+- **Frontend**: Flutter Web (`flutter_localization_web/`) - A modern, responsive UI.
+- **Backend**: Python Flask (`web_tool/app.py`) - Handles the translation logic and file processing.
+
+### How to Run
+
+1. **Start the Backend Server**:
+   ```bash
+   # Terminal 1
+   source venv/bin/activate
+   python web_tool/app.py
+   ```
+   The API will be available at `http://127.0.0.1:5000/api`.
+
+2. **Run the Flutter App**:
+   ```bash
+   # Terminal 2
+   cd flutter_localization_web
+   flutter run -d chrome --web-renderer html
+   ```
+   The app will open in Chrome. You can upload your `en.json`, select languages, and download the results.
+
+### Technical Notes
+- **CORS**: The Flask backend is configured to accept requests from the Flutter Web app.
+- **Web Renderer**: Using `--web-renderer html` is recommended for better compatibility with file downloads in development, though `auto` usually works too.
+
+---
+
 ## ✨ Contribution
 
 Feel free to fork and contribute with:
