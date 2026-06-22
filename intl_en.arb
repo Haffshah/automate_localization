@@ -1,0 +1,25 @@
+{
+  "@@locale": "en",
+  "keyFeedbackIsRequired": "Feedback is required.",
+  "@keyFeedbackIsRequired": {
+    "description": "Shown when the user submits feedback without entering text."
+  },
+  "greeting": "Hello {name}",
+  "@greeting": {
+    "description": "Personalized greeting",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "itemCount": "{count, plural, =0{No items} =1{One item} other{{count} items}}",
+  "@itemCount": {
+    "description": "Number of items in a list",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}
