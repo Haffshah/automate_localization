@@ -1,6 +1,8 @@
 import json
 import os
 import re
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from deep_translator import GoogleTranslator
 from colorama import Fore, Style, init
 
@@ -80,7 +82,11 @@ def translate_plain_text(text: str, translate_fn) -> str:
 
         leading = part[: len(part) - len(part.lstrip())]
         trailing = part[len(part.rstrip()) :]
-        translated_parts.append(leading + translate_fn(part.strip()) + trailing)
+        core = part.strip()
+        translated_core = translate_fn(core)
+        if translated_core is None:
+            translated_core = core
+        translated_parts.append(leading + translated_core + trailing)
 
     return "".join(translated_parts)
 
@@ -105,7 +111,8 @@ def translate_text_value(text: str, target_lang: str) -> str:
     def translate_segment(segment: str) -> str:
         if not segment or not segment.strip():
             return segment
-        return translator.translate(segment)
+        translated = translator.translate(segment)
+        return translated if translated is not None else segment
 
     if is_icu_message(text):
         return translate_icu_message(text, translate_segment)
@@ -113,42 +120,81 @@ def translate_text_value(text: str, target_lang: str) -> str:
     return translate_plain_text(text, translate_segment)
 
 
-def translate_batch(target_lang: str, texts: list[str], chunk_size: int = 50) -> list[str]:
+def translate_batch(target_lang: str, texts: list[str], chunk_size: int = 40, max_retries: int = 5) -> list[str]:
     translated_results: list[str] = []
     translator = GoogleTranslator(source="en", target=target_lang)
     total_batches = (len(texts) + chunk_size - 1) // chunk_size
 
     for index in range(0, len(texts), chunk_size):
         chunk = texts[index : index + chunk_size]
-        try:
-            translated_chunk = translator.translate_batch(chunk)
+        translated_chunk = None
+
+        for attempt in range(max_retries):
+            try:
+                translated_chunk = translator.translate_batch(chunk)
+                print(
+                    f"{Fore.CYAN}   ... translated batch {index // chunk_size + 1}/{total_batches}{Style.RESET_ALL}"
+                )
+                break
+            except Exception as error:
+                wait = min(2 ** attempt, 30)
+                print(
+                    f"{Fore.RED}❌ Batch {index // chunk_size + 1} attempt {attempt + 1}/{max_retries}: {error}{Style.RESET_ALL}"
+                )
+                if attempt < max_retries - 1:
+                    time.sleep(wait)
+
+        if translated_chunk is None:
+            print(f"{Fore.YELLOW}   ... falling back to per-string translation for batch {index // chunk_size + 1}{Style.RESET_ALL}")
+            for text in chunk:
+                for attempt in range(max_retries):
+                    try:
+                        translated_results.append(translator.translate(text) or text)
+                        break
+                    except Exception:
+                        if attempt < max_retries - 1:
+                            time.sleep(min(2 ** attempt, 15))
+                        else:
+                            translated_results.append(text)
+        else:
             translated_results.extend(translated_chunk)
-            print(
-                f"{Fore.CYAN}   ... translated batch {index // chunk_size + 1}/{total_batches}{Style.RESET_ALL}"
-            )
-        except Exception as error:
-            print(
-                f"{Fore.RED}❌ Error translating batch starting at index {index}: {error}{Style.RESET_ALL}"
-            )
-            translated_results.extend(chunk)
 
     return translated_results
 
 
 def translate_arb_batch(target_lang: str, texts: list[str]) -> list[str]:
-    translated_results: list[str] = []
+    translated_results: list[str | None] = [None] * len(texts)
+    plain_indices: list[int] = []
+    plain_texts: list[str] = []
+    complex_indices: list[int] = []
+
+    for index, text in enumerate(texts):
+        if is_icu_message(text) or ("{" in text and "}" in text):
+            complex_indices.append(index)
+        else:
+            plain_indices.append(index)
+            plain_texts.append(text)
+
     total = len(texts)
+    if plain_texts:
+        print(f"{Fore.CYAN}   ... batch translating {len(plain_texts)} plain strings{Style.RESET_ALL}")
+        translated_plain = translate_batch(target_lang, plain_texts)
+        for index, translated in zip(plain_indices, translated_plain):
+            translated_results[index] = translated
 
-    for index, text in enumerate(texts, start=1):
-        try:
-            translated_results.append(translate_text_value(text, target_lang))
-            if index % 10 == 0 or index == total:
-                print(f"{Fore.CYAN}   ... translated {index}/{total}{Style.RESET_ALL}")
-        except Exception as error:
-            print(f"{Fore.RED}❌ Error translating entry {index}: {error}{Style.RESET_ALL}")
-            translated_results.append(text)
+    if complex_indices:
+        print(f"{Fore.CYAN}   ... translating {len(complex_indices)} strings with placeholders{Style.RESET_ALL}")
+        for count, index in enumerate(complex_indices, start=1):
+            try:
+                translated_results[index] = translate_text_value(texts[index], target_lang)
+            except Exception as error:
+                print(f"{Fore.RED}❌ Error translating entry {index + 1}: {error}{Style.RESET_ALL}")
+                translated_results[index] = texts[index]
+            if count % 10 == 0 or count == len(complex_indices):
+                print(f"{Fore.CYAN}   ... placeholders {count}/{len(complex_indices)}{Style.RESET_ALL}")
 
-    return translated_results
+    print(f"{Fore.CYAN}   ... completed {total}/{total}{Style.RESET_ALL}")
+    return [value if value is not None else "" for value in translated_results]
 
 
 def load_json_file(path: str) -> dict:
@@ -210,7 +256,12 @@ def translate_json_source(source_file: str, output_dir: str, languages: dict[str
         print(f"{Fore.YELLOW}✅ Saved: {output_path}{Style.RESET_ALL}")
 
 
-def translate_arb_source(source_file: str, output_dir: str, languages: dict[str, str] | None = None) -> None:
+def translate_arb_source(
+    source_file: str,
+    output_dir: str,
+    languages: dict[str, str] | None = None,
+    parallel_workers: int = 1,
+) -> None:
     languages = languages or LANGUAGES
     data = load_json_file(source_file)
     translatable_keys = get_translatable_keys(data)
@@ -221,7 +272,7 @@ def translate_arb_source(source_file: str, output_dir: str, languages: dict[str,
     )
     os.makedirs(output_dir, exist_ok=True)
 
-    for lang_code, lang_name in languages.items():
+    def translate_language(lang_code: str, lang_name: str) -> str:
         print(f"\n🌍 Translating to {Fore.GREEN}{lang_name}{Style.RESET_ALL} ({lang_code})")
         translated_values = translate_arb_batch(lang_code, values)
         translated_map = dict(zip(translatable_keys, translated_values))
@@ -229,3 +280,16 @@ def translate_arb_source(source_file: str, output_dir: str, languages: dict[str,
         output_path = output_path_for_lang("arb", output_dir, lang_code)
         save_json_file(output_path, translated_data)
         print(f"{Fore.YELLOW}✅ Saved: {output_path}{Style.RESET_ALL}")
+        return lang_code
+
+    if parallel_workers > 1:
+        with ThreadPoolExecutor(max_workers=parallel_workers) as executor:
+            futures = {
+                executor.submit(translate_language, code, name): code
+                for code, name in languages.items()
+            }
+            for future in as_completed(futures):
+                future.result()
+    else:
+        for lang_code, lang_name in languages.items():
+            translate_language(lang_code, lang_name)
